@@ -1,5 +1,15 @@
 [
   {
+    "codigo": "0005",
+    "nombre": "Técnicas de Estudio e Investigación",
+    "creditos": 3,
+    "area": "General",
+    "obligatorio": true,
+    "prerrequisitos": [],
+    "semestre": 1,
+    "completado": false
+  },
+  {
     "codigo": "0017",
     "nombre": "Área Social Humanística 1",
     "creditos": 3,
@@ -20,11 +30,11 @@
     "completado": false
   },
   {
-    "codigo": "0005",
-    "nombre": "Técnicas de Estudio e Investigación",
+    "codigo": "0006",
+    "nombre": "Idioma Técnico 1",
     "creditos": 3,
     "area": "General",
-    "obligatorio": true,
+    "obligatorio": false,
     "prerrequisitos": [],
     "semestre": 1,
     "completado": false
@@ -33,16 +43,6 @@
     "codigo": "0039",
     "nombre": "Deportes 1",
     "creditos": 2,
-    "area": "General",
-    "obligatorio": false,
-    "prerrequisitos": [],
-    "semestre": 1,
-    "completado": false
-  },
-  {
-    "codigo": "0006",
-    "nombre": "Idioma Técnico 1",
-    "creditos": 3,
     "area": "General",
     "obligatorio": false,
     "prerrequisitos": [],
@@ -70,6 +70,26 @@
     "completado": false
   },
   {
+    "codigo": "0147",
+    "nombre": "Física Básica",
+    "creditos": 5,
+    "area": "General",
+    "obligatorio": true,
+    "prerrequisitos": ["0101"],
+    "semestre": 2,
+    "completado": false
+  },
+  {
+    "codigo": "0768",
+    "nombre": "Introducción a los Algoritmos y Flujo de Datos",
+    "creditos": 4,
+    "area": "Desarrollo de software",
+    "obligatorio": true,
+    "prerrequisitos": ["0101"],
+    "semestre": 2,
+    "completado": false
+  },
+  {
     "codigo": "0960",
     "nombre": "Matemática para Computación 1",
     "creditos": 5,
@@ -80,12 +100,12 @@
     "completado": false
   },
   {
-    "codigo": "0147",
-    "nombre": "Física Básica",
-    "creditos": 5,
+    "codigo": "0008",
+    "nombre": "Idioma Técnico 2",
+    "creditos": 3,
     "area": "General",
-    "obligatorio": true,
-    "prerrequisitos": ["0101"],
+    "obligatorio": false,
+    "prerrequisitos": ["0006"],
     "semestre": 2,
     "completado": false
   },
@@ -100,13 +120,43 @@
     "completado": false
   },
   {
-    "codigo": "0008",
-    "nombre": "Idioma Técnico 2",
-    "creditos": 3,
+    "codigo": "0089",
+    "nombre": "Comunicación Asertiva",
+    "creditos": 2,
+    "area": "Metodología de sistemas",
+    "obligatorio": true,
+    "prerrequisitos": ["0103", "0147", "0960"],
+    "semestre": 3,
+    "completado": false
+  },
+  {
+    "codigo": "0107",
+    "nombre": "Área Matemática Intermedia 1",
+    "creditos": 9,
     "area": "General",
-    "obligatorio": false,
-    "prerrequisitos": ["0006"],
-    "semestre": 2,
+    "obligatorio": true,
+    "prerrequisitos": ["0103"],
+    "semestre": 3,
+    "completado": false
+  },
+  {
+    "codigo": "0150",
+    "nombre": "Física 1",
+    "creditos": 5,
+    "area": "General",
+    "obligatorio": true,
+    "prerrequisitos": ["0103", "0147"],
+    "semestre": 3,
+    "completado": false
+  },
+  {
+    "codigo": "0770",
+    "nombre": "Introducción a la Programación y Computación 1",
+    "creditos": 6,
+    "area": "Desarrollo de software",
+    "obligatorio": true,
+    "prerrequisitos": ["0768", "0103", "0147", "0960"],
+    "semestre": 3,
     "completado": false
   },
   {
@@ -123,39 +173,9 @@
     "codigo": "0962",
     "nombre": "Matemática para Computación 2",
     "creditos": 5,
-    "area": "Ciencias de la computación",
-    "obligatorio": true,
-    "prerrequisitos": ["0103", "0147", "0960"],
-    "semestre": 3,
-    "completado": false
-  },
-  {
-    "codigo": "0770",
-    "nombre": "Introducción a la Programación y Computación 1",
-    "creditos": 6,
-    "area": "Desarrollo de software",
-    "obligatorio": true,
-    "prerrequisitos": ["0103", "0147", "0960"],
-    "semestre": 3,
-    "completado": false
-  },
-  {
-    "codigo": "0107",
-    "nombre": "Área Matemática Intermedia 1",
-    "creditos": 9,
-    "area": "Ciencias de la computación",
-    "obligatorio": true,
-    "prerrequisitos": ["0103"],
-    "semestre": 3,
-    "completado": false
-  },
-  {
-    "codigo": "0150",
-    "nombre": "Física 1",
-    "creditos": 5,
     "area": "General",
     "obligatorio": true,
-    "prerrequisitos": ["0103", "0147"],
+    "prerrequisitos": ["0103", "0147", "0960"],
     "semestre": 3,
     "completado": false
   },
@@ -177,26 +197,6 @@
     "obligatorio": false,
     "prerrequisitos": ["0008"],
     "semestre": 3,
-    "completado": false
-  },
-  {
-    "codigo": "0796",
-    "nombre": "Lenguajes Formales y de Programación",
-    "creditos": 4,
-    "area": "Ciencias de la computación",
-    "obligatorio": true,
-    "prerrequisitos": ["0770", "0795", "0960"],
-    "semestre": 4,
-    "completado": false
-  },
-  {
-    "codigo": "0771",
-    "nombre": "Introducción a la Programación y Computación 2",
-    "creditos": 6,
-    "area": "Desarrollo de software",
-    "obligatorio": true,
-    "prerrequisitos": ["0107", "0770", "0795", "0960"],
-    "semestre": 4,
     "completado": false
   },
   {
@@ -230,6 +230,36 @@
     "completado": false
   },
   {
+    "codigo": "0771",
+    "nombre": "Introducción a la Programación y Computación 2",
+    "creditos": 6,
+    "area": "Desarrollo de software",
+    "obligatorio": true,
+    "prerrequisitos": ["0107", "0770", "0795", "0962"],
+    "semestre": 4,
+    "completado": false
+  },
+  {
+    "codigo": "0964",
+    "nombre": "Organización Computacional",
+    "creditos": 4,
+    "area": "Ciencias de la computación",
+    "obligatorio": true,
+    "prerrequisitos": ["0089", "0150", "0770", "0962"],
+    "semestre": 4,
+    "completado": false
+  },
+  {
+    "codigo": "2025",
+    "nombre": "Prácticas Iniciales",
+    "creditos": 0,
+    "area": "General",
+    "obligatorio": true,
+    "prerrequisitos": ["0089", "0107", "0770"],
+    "semestre": 4,
+    "completado": false
+  },
+  {
     "codigo": "0010",
     "nombre": "Lógica",
     "creditos": 1,
@@ -250,56 +280,6 @@
     "completado": false
   },
   {
-    "codigo": "2025",
-    "nombre": "Prácticas Iniciales",
-    "creditos": 1,
-    "area": "General",
-    "obligatorio": true,
-    "prerrequisitos": ["0103", "0770"],
-    "semestre": 4,
-    "completado": false
-  },
-  {
-    "codigo": "0732",
-    "nombre": "Estadística 1",
-    "creditos": 5,
-    "area": "Metodología de sistemas",
-    "obligatorio": true,
-    "prerrequisitos": ["0107", "0005"],
-    "semestre": 5,
-    "completado": false
-  },
-  {
-    "codigo": "0777",
-    "nombre": "Organización de Lenguajes y Compiladores 1",
-    "creditos": 6,
-    "area": "Ciencias de la computación",
-    "obligatorio": true,
-    "prerrequisitos": ["0771", "0796", "0962"],
-    "semestre": 5,
-    "completado": false
-  },
-  {
-    "codigo": "0964",
-    "nombre": "Organización Computacional",
-    "creditos": 4,
-    "area": "Ciencias de la computación",
-    "obligatorio": true,
-    "prerrequisitos": ["0152", "0771", "0962"],
-    "semestre": 5,
-    "completado": false
-  },
-  {
-    "codigo": "0772",
-    "nombre": "Estructuras de Datos",
-    "creditos": 6,
-    "area": "Desarrollo de software",
-    "obligatorio": true,
-    "prerrequisitos": ["0771", "0796", "0962"],
-    "semestre": 5,
-    "completado": false
-  },
-  {
     "codigo": "0116",
     "nombre": "Matemática Aplicada 3",
     "creditos": 5,
@@ -316,6 +296,46 @@
     "area": "General",
     "obligatorio": true,
     "prerrequisitos": ["0112", "0114"],
+    "semestre": 5,
+    "completado": false
+  },
+  {
+    "codigo": "0281",
+    "nombre": "Sistemas Operativos 1",
+    "creditos": 6,
+    "area": "Ciencias de la computación",
+    "obligatorio": true,
+    "prerrequisitos": ["0964"],
+    "semestre": 5,
+    "completado": false
+  },
+  {
+    "codigo": "0732",
+    "nombre": "Estadística 1",
+    "creditos": 5,
+    "area": "General",
+    "obligatorio": true,
+    "prerrequisitos": ["0107", "0005"],
+    "semestre": 5,
+    "completado": false
+  },
+  {
+    "codigo": "0772",
+    "nombre": "Estructuras de Datos",
+    "creditos": 6,
+    "area": "Desarrollo de software",
+    "obligatorio": true,
+    "prerrequisitos": ["0089", "0771"],
+    "semestre": 5,
+    "completado": false
+  },
+  {
+    "codigo": "0778",
+    "nombre": "Arquitectura de Computadores y Ensambladores 1",
+    "creditos": 5,
+    "area": "Ciencias de la computación",
+    "obligatorio": true,
+    "prerrequisitos": ["0964"],
     "semestre": 5,
     "completado": false
   },

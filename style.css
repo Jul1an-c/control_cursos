@@ -1,142 +1,590 @@
-/* Fondo general */
+:root {
+  --primary: #1a1a2e;
+  --primary-light: #16213e;
+  --accent: #e94560;
+  --bg: #f0f2f5;
+  --card-bg: #ffffff;
+  --text: #2d3436;
+  --text-muted: #636e72;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --transition: 0.25s ease;
+
+  --area-ciencias: #f59e0b;
+  --area-metodologia: #3b82f6;
+  --area-desarrollo: #10b981;
+  --area-general: #f97316;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  background-color: #f8f9fa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
 }
 
-/* Título general */
-h1 {
-  color: #333;
+/* ─── HEADER ─── */
+.app-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-radius: 0 0 24px 24px;
+  padding: 24px 0 20px;
+  margin-bottom: 28px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.app-header h1 {
   font-weight: 700;
-  margin-bottom: 30px;
-  text-align: center;
+  font-size: 1.6rem;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
-.semestre {
-  background-color: #ffffff;
-  padding: 20px;
-  border: 2px solid #343a40; /* gris oscuro o negro suave */
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+.app-header .subtitle {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-top: 2px;
 }
 
-/* Título del semestre */
-.semestre h2, h4 {
-  color: #333;
-  margin-top: 0;
-  border-bottom: 2px solid #5c4a4a;
-  padding-bottom: 5px;
-  font-weight: bold;
-  text-align: center;
+/* ─── TOOLBAR ─── */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
 }
 
-/* Tarjeta de curso */
-.curso-card {
+.pensum-info {
   display: flex;
   align-items: center;
-  border-left: 10px solid gray; /* Línea lateral por área */
-  background-color: #fff;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  padding: 8px;
-  position: relative;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 6px 14px 6px 18px;
+  border-radius: 20px;
+  font-size: 0.85rem;
 }
 
-/* Animación al pasar el mouse */
-.curso-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+.pensum-info .pensum-name {
+  font-weight: 600;
 }
 
-/* Área lateral por color */
-.area-ciencias {
-  border-left: 10px solid #ffd700;
-}
-.area-metodologia {
-  border-left: 10px solid #007bff;
-}
-.area-desarrollo {
-  border-left: 10px solid #28a745;
-}
-.area-general {
-  border-left: 10px solid #f08c3e;
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
-/* Estado completado: borde completo en verde, sin quitar línea lateral */
-.curso-completado {
-  outline: 2px solid #28a745;
-  outline-offset: 1px;
+.btn-tool {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Punto obligatorio */
-.obligatorio-dot {
-  color: black;
-  font-size: 35px;
-  vertical-align: middle;
+.btn-tool:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.unsaved-indicator {
+  color: #fbbf24;
+  font-size: 1.4rem;
   line-height: 1;
+  display: none;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-/* Contenido del curso */
-.contenido {
-  flex-grow: 1;
-  padding: 5px 10px;
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrapper {
+  margin-top: 14px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+.progress-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ─── SEMESTRE ─── */
+.semestre-wrapper {
+  margin-bottom: 32px;
+}
+
+.semestre-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.semestre-count {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* ─── COURSE CARD ─── */
+.curso-card {
+  display: flex;
+  align-items: stretch;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  min-height: 82px;
+  overflow: hidden;
   position: relative;
-  font-size: 14px;
 }
 
-/* Prerrequisitos */
-.prereq {
-  font-size: 12px;
-  color: #555;
-  margin-top: 6px;
+.curso-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.curso-card + .curso-card {
+  margin-top: 10px;
+}
+
+.curso-card.curso-completado {
+  box-shadow: 0 0 0 2px var(--area-desarrollo), var(--shadow);
+}
+
+.curso-card.curso-completado:hover {
+  box-shadow: 0 0 0 2px var(--area-desarrollo), var(--shadow-hover);
+}
+
+/* Color bar */
+.color-bar {
+  width: 8px;
+  flex-shrink: 0;
+  position: relative;
   cursor: pointer;
 }
 
-.prereq:hover {
-  text-decoration: underline;
-}
+.color-bar.area-ciencias { background: var(--area-ciencias); }
+.color-bar.area-metodologia { background: var(--area-metodologia); }
+.color-bar.area-desarrollo { background: var(--area-desarrollo); }
+.color-bar.area-general { background: var(--area-general); }
 
-/* Checkbox */
-.form-check-input {
-  transform: scale(1.2);
-}
-
-/* Tooltip que solo aparece al pasar por la línea de color */
-.tooltip-area {
+.color-bar .tooltip-area {
   position: absolute;
-  top: 6px;
+  top: 50%;
   left: 14px;
-  background-color: #000;
+  transform: translateY(-50%);
+  background: var(--primary);
   color: #fff;
-  padding: 2px 6px;
-  font-size: 11px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
   border-radius: 4px;
+  white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease-in-out;
-}
-
-/* Línea lateral con hover de tooltip */
-.color-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 10px;
-  height: 100%;
-  z-index: 5;
+  transition: opacity 0.2s;
+  z-index: 10;
+  font-weight: 500;
 }
 
 .color-bar:hover .tooltip-area {
   opacity: 1;
 }
 
-/* Botón de cierre de popup*/
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+/* Card body */
+.card-body {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 12px 16px;
+  gap: 14px;
+  min-width: 0;
+}
+
+.card-code-section {
+  text-align: center;
+  flex-shrink: 0;
+  width: 62px;
+}
+
+.card-code {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.card-credits {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.card-area-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 8px;
+  border-radius: 3px;
+  margin-top: 3px;
+}
+
+.card-area-badge.badge-ciencias {
+  background: #fef3c7;
+  color: #92400e;
+}
+.card-area-badge.badge-metodologia {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.card-area-badge.badge-desarrollo {
+  background: #d1fae5;
+  color: #065f46;
+}
+.card-area-badge.badge-general {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.card-prereqs {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.card-prereqs a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.card-prereqs a:hover {
+  text-decoration: underline;
+}
+
+.prereq-completado { color: #10b981 !important; }
+.prereq-pendiente { color: #e94560 !important; }
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.obligatorio-dot {
+  font-size: 28px;
+  color: #000;
+  line-height: 1;
+  opacity: 0.55;
+}
+
+.form-check-input {
+  width: 18px;
+  height: 18px;
   cursor: pointer;
-  font-size: 20px;
+  accent-color: var(--area-desarrollo);
+}
+
+.card-status {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  display: inline-block;
+  line-height: 1.4;
+}
+.status-disponible { background: #bbf7d0; color: #14532d; }
+.status-bloqueado { background: #fef3c7; color: #92400e; }
+
+/* ─── MODAL PENSUNS ─── */
+.pensum-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.pensum-option {
+  border: 2px solid #e0e0e0;
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fafafa;
+}
+
+.pensum-option:hover {
+  border-color: var(--area-metodologia);
+  background: #eff6ff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.pensum-option .pensum-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.pensum-option .pensum-option-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.pensum-option .pensum-option-uni {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ─── MODAL CURSO ─── */
+#modal-body-content strong {
+  color: var(--primary);
+}
+
+[data-bs-theme="dark"] #modal-body-content strong {
+  color: #fff;
+}
+
+/* ─── LEGEND ─── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin: 8px 0 20px;
+  padding: 12px 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.legend-dot.area-ciencias { background: var(--area-ciencias); }
+.legend-dot.area-metodologia { background: var(--area-metodologia); }
+.legend-dot.area-desarrollo { background: var(--area-desarrollo); }
+.legend-dot.area-general { background: var(--area-general); }
+
+/* ─── RESPONSIVE ─── */
+/* ─── EXPORT REMINDER ─── */
+.export-reminder {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  color: #92400e;
+  margin-bottom: 20px;
+}
+.export-reminder.show { display: flex; }
+.export-reminder .btn-close {
+  flex-shrink: 0;
+  opacity: 0.5;
+  cursor: pointer;
+}
+.export-reminder .btn-close:hover { opacity: 1; }
+
+/* ─── MODO OSCURO ─── */
+[data-bs-theme="dark"] {
+  --bg: #121212;
+  --card-bg: #1e1e1e;
+  --text: #e8e8e8;
+  --text-muted: #999;
+  --primary: #121212;
+  --primary-light: #1e1e1e;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.7);
+
+  --area-ciencias: #f59e0b;
+  --area-metodologia: #3b82f6;
+  --area-desarrollo: #10b981;
+  --area-general: #f97316;
+}
+
+[data-bs-theme="dark"] {
+  scrollbar-color: #333 #121212;
+}
+
+[data-bs-theme="dark"] .app-header {
+  background: linear-gradient(135deg, #16162a 0%, #1a1a32 100%);
+}
+
+[data-bs-theme="dark"] .btn-tool {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] .btn-tool:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+[data-bs-theme="dark"] .pensum-info { background: rgba(255, 255, 255, 0.06); }
+
+[data-bs-theme="dark"] .curso-card {
+  background: var(--card-bg);
+  border: 1px solid #2a2a2a;
+  box-shadow: var(--shadow);
+}
+
+[data-bs-theme="dark"] .curso-card:hover {
+  border-color: #3a3a3a;
+  box-shadow: var(--shadow-hover);
+}
+
+[data-bs-theme="dark"] .curso-card.curso-completado {
+  box-shadow: 0 0 0 2px #10b981, var(--shadow);
+}
+
+[data-bs-theme="dark"] .card-prereqs a.prereq-completado { color: #10b981 !important; }
+[data-bs-theme="dark"] .card-prereqs a.prereq-pendiente { color: #e94560 !important; }
+
+[data-bs-theme="dark"] .legend { background: var(--card-bg); border: 1px solid #2a2a2a; }
+
+[data-bs-theme="dark"] .card-name,
+[data-bs-theme="dark"] .card-code { color: #fff; }
+
+[data-bs-theme="dark"] .semestre-title { color: #fff; border-color: #2a2a2a; }
+[data-bs-theme="dark"] .semestre-count { color: #999; }
+[data-bs-theme="dark"] .obligatorio-dot { opacity: 0.5; color: #fff; }
+[data-bs-theme="dark"] .card-credits { color: #999; }
+
+[data-bs-theme="dark"] .pensum-option { background: #1e1e1e; border-color: #2a2a2a; }
+[data-bs-theme="dark"] .pensum-option:hover { border-color: #3b82f6; background: #162033; }
+
+[data-bs-theme="dark"] .modal-content { background: #1e1e1e; color: #e8e8e8; border: 1px solid #2a2a2a; }
+[data-bs-theme="dark"] .modal-header { border-color: #2a2a2a; }
+[data-bs-theme="dark"] .modal-header .btn-close { filter: invert(0.9); }
+
+[data-bs-theme="dark"] .progress-track { background: rgba(255, 255, 255, 0.06); }
+[data-bs-theme="dark"] .progress-fill { background: #e94560; }
+
+[data-bs-theme="dark"] .export-reminder { background: #1e1a14; border-color: #5c4520; color: #f59e0b; }
+[data-bs-theme="dark"] .unsaved-indicator { color: #f59e0b; }
+[data-bs-theme="dark"] .status-disponible { background: #14261a; color: #10b981; }
+[data-bs-theme="dark"] .status-bloqueado { background: #261418; color: #e94560; }
+[data-bs-theme="dark"] .color-bar .tooltip-area { background: #333; color: #fff; }
+
+/* ─── SCROLL TO TOP ─── */
+.scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  z-index: 999;
+  line-height: 1;
+}
+
+.scroll-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-top:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="dark"] .scroll-top {
+  background: #2a2a40;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+[data-bs-theme="dark"] .scroll-top:hover {
+  background: #3a3a50;
+}
+
+@media (max-width: 768px) {
+  .app-header h1 { font-size: 1.3rem; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-actions { margin-left: 0; justify-content: center; }
+  .card-body { padding: 10px 12px; gap: 10px; }
+  .card-code-section { width: 50px; }
+  .card-code { font-size: 0.85rem; }
+  .card-name { font-size: 0.85rem; }
+  .legend { gap: 10px; padding: 10px 14px; }
 }

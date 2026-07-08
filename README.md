@@ -1,77 +1,79 @@
-# Visualizador de Cursos - Ingeniería en Sistemas USAC
+<div align="center">
 
-Este proyecto permite visualizar, organizar y hacer seguimiento del avance en los cursos de Ingeniería en Sistemas de la USAC (pénsum 2025). Ideal para planificar, marcar cursos completados y ver los prerrequisitos de forma interactiva.
+# Control de Cursos — USAC
 
-<img src="docs/demo1.gif" alt="Vista general del sistema" width="600"/>
+Visualizador interactivo de pensums. Incluye inicialmente **Ingeniería en Ciencias y Sistemas (USAC CLAR 2025)** y se adapta automáticamente a cualquier carrera que se agregue.
 
----
+<p>
+  <img src="https://img.shields.io/github/stars/Jul1an-c/cursos_sistemas_2025?style=flat" alt="Stars">
+  <img src="https://img.shields.io/github/last-commit/Jul1an-c/cursos_sistemas_2025?style=flat" alt="Ultimo Commit">
+</p>
 
-## 🚀 Funcionalidades
+<a href="CONTRIBUTING.md">Agregar un pensum</a>
 
-<table>
-  <tr>
-    <td align="center">
-      <strong>Visualización semestral de cursos</strong><br>
-      <img src="docs/dm_vist_gen.gif" alt="Mostrando Semestral" width="250" />
-    </td>
-    <td align="center">
-      <strong>Colores por área (Desarrollo, Metodología, Ciencias.)</strong><br>
-      <img src="docs/dem_ar.gif" alt="Mostrando Colores" width="250" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <strong>Marcar cursos como completados (guardado local)</strong><br>
-      <img src="docs/dem_marcar.gif" alt="Marcado De Cursos Completos" width="250" />
-    </td>
-    <td align="center">
-      <strong>Prerrequisitos interactivos con vista emergente</strong><br>
-      <img src="docs/dem_prerrequisitos.gif" alt="Vista general de prerrequisitos" width="250" />
-    </td>
-  </tr>
-</table>
+</div>
 
 ---
 
-## 📦 Cómo usar
+**Exportá seguido tu progreso** con el botón Exportar y guardá el archivo `.json` donde quieras (Drive, USB, tu PC). Después lo importás si cambiás de navegador o dispositivo.
 
-1. Clona o descarga este repositorio:
+<p align="center">
+  <img src="docs/demos.gif" alt="Demo">
+</p>
 
-    ```bash
-    git clone https://github.com/Jul1an-c/cursos_sistemas_2025.git
-    cd cursos_sistemas_2025
-    ```
+## Contenido
 
-    ![Vista De Descarga](docs/descargar_repositorio.gif)
+* [Usar online](#usar-online)
+* [Usar localmente](#usar-localmente)
+* [Funcionalidades](#funcionalidades)
+* [Agregar otro pensum](#agregar-otro-pensum)
+* [Tecnologías](#tecnologías)
 
-2. Abre el proyecto con un **servidor local** (no funciona al abrir `index.html` directamente):
+## Usar online
 
-    ### Opción 1: Live Server (VS Code)
-    - Abre el proyecto en Visual Studio Code.
-    - Instala la extensión **Live Server**.
-    - Haz clic derecho en `index.html` → **"Open with Live Server"**.
+https://Jul1an-c.github.io/cursos_sistemas_2025/
 
-    ### Opción 2: Python
-    ```bash
-    python -m http.server 8000
-    ```
-    Luego abre: [http://localhost:8000](http://localhost:8000)
+Abrí el link en tu PC o celular.
 
-3. Marca los cursos que ya completaste.
-4. Tu progreso se guarda automáticamente en el navegador usando `localStorage`.
+## Usar localmente
 
-> ℹ️ Este proyecto no requiere instalación ni backend, pero **sí debe abrirse desde un servidor local** por restricciones del navegador al usar `fetch()` con archivos locales.
+```bash
+git clone https://github.com/Jul1an-c/cursos_sistemas_2025.git
+cd cursos_sistemas_2025
+```
+
+Luego abrí `index.html` en tu navegador (no necesita servidor).
+
+## Funcionalidades
+
+| Función             | Descripción                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| Vista por semestre  | Cursos organizados por semestre, cada área con su color           |
+| Prerrequisitos      | Cada curso muestra lo necesario. Verde si lo tenés, rojo si falta |
+| Estado del curso    | "Disponible" si cumplís requisitos, "Faltan prerrequisitos" si no |
+| Progreso automático | Checkbox que guarda tu avance en el navegador                     |
+| Exportar / Importar | Descargá tu progreso como `.json` y restáuralo cuando quieras     |
+| Tema oscuro         | Botón para cambiar entre modo claro y oscuro                      |
+| Multi-pensum        | Soporta varias carreras. Por ahora está Sistemas USAC             |
+
+## Agregar otro pensum
+
+La app soporta cualquier carrera, de la USAC o de otra universidad, siempre que se siga el mismo formato.
+
+Si querés agregar Electrónica, Agronomía, un pensum anterior de Sistemas o cualquier otra carrera, seguí la guía en [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Tecnologías
+
+<p>
+  HTML5 • CSS3 • JavaScript • Bootstrap 5.3 • localStorage
+</p>
 
 ---
 
-## 📁 Sobre la carpeta `docs/`
+<div align="center">
 
-La carpeta `docs/` contiene únicamente los **GIFs de demostración** usados en este README.  
-No es necesaria para el funcionamiento del proyecto y puede eliminarse si deseas reducir el tamaño del repositorio.
+Hecho por <a href="https://github.com/Jul1an-c"><strong>Jul1an-c</strong></a>
 
----
+Si este proyecto te fue útil, considerá dejar una ⭐ en el repositorio.
 
-## 🛠 Tecnologías utilizadas
-
-- HTML + CSS + JavaScript
-- Bootstrap 5
+</div>

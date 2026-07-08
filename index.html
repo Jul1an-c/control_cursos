@@ -8,12 +8,80 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container py-4">
-    <h1 class="mb-4 text-center">Control De Cursos 2025</h1>
+
+  <!-- ─── HEADER ─── -->
+  <header class="app-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <div>
+          <h1>Control de Cursos</h1>
+          <div class="subtitle">Seguimiento de pensum - USAC</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="pensum-info">
+          <span class="pensum-name" id="pensumNombre">—</span>
+          <span style="opacity:0.6">·</span>
+          <span style="font-size:0.78rem;opacity:0.7" id="pensumUni"></span>
+          <button class="btn-tool" id="btnCambiarPensum" style="margin-left:6px">Cambiar</button>
+        </div>
+        <div class="toolbar-actions">
+          <span class="unsaved-indicator" id="unsavedIndicator" title="Cambios sin exportar">•</span>
+          <button class="btn-tool" id="btnExportar">⬇ Exportar</button>
+          <button class="btn-tool" id="btnImportar">⬆ Importar</button>
+          <button class="btn-tool" id="btnTema" title="Cambiar tema">🌙</button>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-wrapper">
+        <div class="progress-header">
+          <span>Progreso general</span>
+          <span id="progressText">0/0 (0%)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── MAIN ─── -->
+  <main class="container">
+
+    <!-- Legend -->
+    <div class="legend" id="legendContainer"></div>
+
+    <!-- Courses -->
     <div id="contenedor" class="row gy-4"></div>
+
+    <!-- Export reminder -->
+    <div class="export-reminder" id="exportReminder">
+      <span>💾 Hiciste varios cambios — <strong>exportá tu progreso</strong> para no perderlo si cambiás de navegador o computadora.</span>
+      <button class="btn-close btn-close-sm" id="btnCerrarRecordatorio" aria-label="Cerrar"></button>
+    </div>
+
+  </main>
+
+  <!-- ─── MODAL: SELECCIONAR PENSUM ─── -->
+  <div class="modal fade" id="modalBienvenida" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar pensum</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted mb-3">Elegí la carrera para cargar sus cursos:</p>
+          <div class="pensum-grid" id="modalPensumOpciones"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Modal para prerrequisitos -->
+  <!-- ─── MODAL: DETALLE CURSO ─── -->
   <div class="modal fade" id="modalCurso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -26,7 +94,12 @@
     </div>
   </div>
 
+  <!-- ─── SCROLL TO TOP ─── -->
+  <button id="btnScrollTop" class="scroll-top" title="Subir al inicio">↑</button>
+
+  <!-- ─── SCRIPTS ─── -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="data/pensums.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

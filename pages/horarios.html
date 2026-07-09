@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planificador de Horarios - USAC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../styles/horarios.css" rel="stylesheet">
+</head>
+<body>
+
+  <header class="hdr">
+    <div class="container-fluid" style="max-width:1400px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <div>
+          <h1>Planificador de Horarios</h1>
+          <div class="st">Armá tu horario desde los horarios USAC</div>
+        </div>
+        <div class="tb">
+          <select class="sel" id="selSemestre">
+            <option value="1">Semestre 1</option>
+            <option value="2" selected>Semestre 2</option>
+            <option value="vj">Vac. Junio</option>
+            <option value="vd">Vac. Diciembre</option>
+          </select>
+          <button class="bt p" id="btnCargar">⟳ Cargar</button>
+          <button class="bt" id="btnLimpiar">✕ Limpiar</button>
+          <button class="bt" id="btnTema">🌙</button>
+          <a href="../index.html" class="bt">← Pensum</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="ly">
+    <div class="sd">
+      <div class="card">
+        <h3>🔍 Buscar cursos</h3>
+        <input type="text" class="srch" id="txtBuscar" placeholder="Código, nombre o catedrático..." autocomplete="off">
+        <div style="margin-top:8px">
+          <div class="loading" id="loadingState">
+            <div class="sp"></div>
+            <div style="margin-top:7px;font-size:0.84rem">Presioná "Cargar" para obtener los horarios</div>
+          </div>
+          <div class="err" id="errorState" style="display:none"></div>
+          <div class="rl" id="resultsList" style="display:none"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📋 Mis cursos <span id="cursoCount" class="bc">0</span></h3>
+        <div id="resumenCursos" style="font-size:0.8rem;color:var(--muted)">No hay cursos agregados al horario.</div>
+      </div>
+    </div>
+
+    <div class="cal-w">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:6px">
+          <h3 style="margin:0">📅 Horario semanal</h3>
+          <div class="bar-conf" id="barConflictos">
+            <span class="bd"></span>
+            <span id="conflictCount">Sin traslapes</span>
+          </div>
+        </div>
+        <div id="conflictPanel" style="display:none;background:rgba(233,69,96,0.08);border:1px solid var(--red);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:0.78rem">
+          <strong style="color:var(--red);font-size:0.82rem">⚠ Traslapes detectados</strong>
+          <div id="conflictList" style="margin-top:4px;display:flex;flex-direction:column;gap:4px"></div>
+        </div>
+        <div class="lg">
+          <span class="lg-it"><span class="lg-st" style="color:var(--star-lab)">★</span> Lab</span>
+          <span class="lg-it"><span class="lg-st" style="color:var(--star-td)">★</span> T. Dirigido</span>
+          <span class="lg-it"><span class="lg-st" style="color:var(--star-dib)">★</span> Dibujo</span>
+          <span class="lg-it"><span class="lg-st" style="color:var(--star-prac)">★</span> Práctica</span>
+        </div>
+        <div class="cal-scr" id="calScroll">
+          <div class="empty" id="emptyState">
+            <div class="ei">📅</div>
+            <div>Buscá y agregá cursos para armar tu horario.</div>
+          </div>
+          <div class="cal-g" id="calGrid" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="sct" id="btnScrollTop">↑</button>
+  <div class="tt" id="toast"></div>
+
+  <div class="modal fade" id="modalQuitar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Quitar curso</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body" id="modalQuitarBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-danger btn-sm" id="btnConfirmarQuitar">Quitar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalRestriccion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">⚠ Este curso tiene restricciones</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body" id="modalRestBody">
+          <p style="font-size:0.88rem">Este curso puede tener requisitos especiales (carné terminado en ciertos dígitos, plan específico, etc.).</p>
+          <p style="font-size:0.85rem;color:var(--muted)">Verificá en el <a href="https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2" target="_blank" rel="noopener">sitio oficial de horarios USAC</a> para asegurarte de que podés asignarte.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-success btn-sm" id="btnConfirmarRestriccion">Ya verifiqué, agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const SK = 'cursoControlHorarios';
+    const PROXIES = [
+      'https://api.allorigins.win/raw?url=',
+      'https://api.allorigins.win/get?url=',
+      'https://api.codetabs.com/v1/proxy?quest=',
+    ];
+    let proxyIdx = 0;
+    function proxyUrl(u) { return PROXIES[proxyIdx] + encodeURIComponent(u); }
+    const DL = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+    const DA = ['LU','MA','MI','JU','VI','SA','DO'];
+    const DM = { LU:0, MA:1, MI:2, JU:3, VI:4, SA:5, DO:6 };
+    const H0 = 7, H1 = 21;
+    const CL = ['cal-cl1','cal-cl2','cal-cl3','cal-cl4','cal-cl5','cal-cl6','cal-cl7','cal-cl8'];
+    const SM = { 'badge-blue':'bl','badge-info':'ci','badge-success':'vd','badge-danger':'rj' };
+
+    let cursosData = [];
+    let cursosAgregados = [];
+    let conflictKeys = {};
+
+    const $ = s => document.querySelector(s);
+    const ss = $('#selSemestre'), bc = $('#btnCargar'), bl = $('#btnLimpiar');
+    const tb = $('#txtBuscar'), rl = $('#resultsList'), ld = $('#loadingState'), er = $('#errorState');
+    const cg = $('#calGrid'), es = $('#emptyState'), cc = $('#cursoCount'), rm = $('#resumenCursos');
+    const tt = $('#toast'), bt = $('#btnTema'), sc = $('#btnScrollTop'), ce = $('#conflictCount');
+
+    function tema(o) {
+      document.documentElement.setAttribute('data-bs-theme', o ? 'dark' : 'light');
+      bt.textContent = o ? '☀️' : '🌙';
+      localStorage.setItem('horarioTema', o ? 'dark' : 'light');
+    }
+    const tm = localStorage.getItem('horarioTema');
+    if (tm) tema(tm === 'dark'); else tema(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    bt.addEventListener('click', () => tema(document.documentElement.getAttribute('data-bs-theme') !== 'dark'));
+
+    window.addEventListener('scroll', () => sc.classList.toggle('vs', window.scrollY > 300));
+    sc.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    let ti;
+    function msg(m, e) {
+      tt.textContent = m; tt.style.background = e ? '#e94560' : '#10b981';
+      tt.classList.add('sh'); clearTimeout(ti); ti = setTimeout(() => tt.classList.remove('sh'), 2500);
+    }
+
+    function parse(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const rows = doc.querySelectorAll('#tblHorarios tbody tr');
+      const out = [];
+      rows.forEach(tr => {
+        const td = tr.querySelectorAll('td');
+        if (td.length < 8) return;
+        const raw = td[0].textContent.trim();
+        const m = raw.match(/^(\d{4})\s+(.+)/);
+        if (!m) return;
+        const badge = td[0].querySelector('.badge');
+        let sk = null;
+        if (badge) for (const c of badge.classList) { if (SM[c]) { sk = SM[c]; break; } }
+        const sr = td[1].textContent.trim();
+        const md = td[2].textContent.trim();
+        const hi = td[3].textContent.trim();
+        const hf = td[4].textContent.trim();
+        const dr = td[5].textContent;
+        const ds = DL.filter((_, i) => new RegExp('\\b' + DA[i] + '\\b').test(dr));
+        const ca = td[6].textContent.trim();
+        const ax = td[7].textContent.trim();
+        const btn = td[8].querySelector('button');
+        const rt = btn && btn.textContent.trim().includes('Ver') ? 'co' : 'sn';
+        out.push({ codigo: m[1], nombre: m[2].trim(), seccion: sr, modalidad: md, inicio: hi, fin: hf, dias: ds, catedratico: ca, auxiliar: ax, restType: rt, starKey: sk, key: m[1] + '-' + sr });
+      });
+      return out;
+    }
+
+    const URLS = {
+      '1': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/1',
+      '2': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2',
+      'vj': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_junio',
+      'vd': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_diciembre',
+    };
+
+    async function cargar() {
+      const url = URLS[ss.value];
+      if (!url) { msg('Semestre no válido', 1); return; }
+      ld.style.display = 'block'; ld.innerHTML = '<div class="sp"></div><div style="margin-top:7px">Cargando horarios...</div>';
+      er.style.display = 'none'; rl.style.display = 'none';
+      try {
+        let r;
+        for (let i = proxyIdx; i < PROXIES.length; i++) {
+          proxyIdx = i;
+          try {
+            r = await fetch(proxyUrl(url), { signal: AbortSignal.timeout(15000) });
+            if (r.ok) break;
+          } catch (_) { continue; }
+        }
+        if (!r || !r.ok) throw new Error('Todos los proxies fallaron. Probá más tarde.');
+        let text = await r.text();
+        if (PROXIES[proxyIdx].includes('/get?')) {
+          try { text = JSON.parse(text).contents; } catch(_) {}
+        }
+        cursosData = parse(text);
+        if (!cursosData.length) throw new Error('No se encontraron cursos.');
+        ld.style.display = 'none'; rl.style.display = 'block';
+        render(tb.value); msg(`${cursosData.length} cursos cargados`);
+      } catch (e) {
+        ld.style.display = 'none';
+        er.style.display = 'block';
+        er.innerHTML = `<strong>Error:</strong> ${e.message}<br><small>Intentá de nuevo.</small>`;
+      }
+    }
+
+    function render(f) {
+      const q = f.toLowerCase().trim();
+      let items = q ? cursosData.filter(c => c.codigo.includes(q) || c.nombre.toLowerCase().includes(q) || c.catedratico.toLowerCase().includes(q)) : [...cursosData];
+      const ord = { null: 0, bl: 1, ci: 2, vd: 3, rj: 4 };
+      items.sort((a, b) => (ord[a.starKey] ?? 0) - (ord[b.starKey] ?? 0) || a.codigo.localeCompare(b.codigo));
+      if (!items.length) { rl.innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.85rem">Sin resultados</div>'; return; }
+
+      rl.innerHTML = items.map(c => {
+        const done = cursosAgregados.some(a => a.key === c.key);
+        const star = c.starKey ? `<span class="cc-s ${c.starKey}">★</span>` : '';
+        let dg = '<div class="dg">';
+        DL.forEach(l => dg += `<div class="dh">${l}</div>`);
+        DL.forEach((l, i) => { const on = c.dias.includes(l) ? ' on' : ''; dg += `<div class="dc${on}">${on ? 'X' : ''}</div>`; });
+        dg += '</div>';
+        const restHtml = c.restType === 'co'
+          ? '<span class="rb co" title="Verificá en el sitio oficial de USAC">⚠ Restricciones</span>'
+          : '<span class="rb sn">✓ Sin restricciones</span>';
+        return `<div class="cc${done?' done':''}">
+          <div class="cc-h"><div><span class="cc-c">${c.codigo}</span> <span class="cc-n">${c.nombre}</span>${star}</div><span class="cc-sec">${c.seccion}</span></div>
+          <div class="cc-i"><div><div class="il">Modalidad</div><div class="iv">${c.modalidad}</div></div><div><div class="il">Horario</div><div class="iv">${c.inicio} — ${c.fin}</div></div><div><div class="il">Catedrático</div><div class="iv">${c.catedratico||'—'}</div></div><div><div class="il">Auxiliar</div><div class="iv">${c.auxiliar||'—'}</div></div></div>
+          <div class="cc-d">${dg}</div>
+          <div class="cc-f">${restHtml}<button class="btn-ag${done?' dn':''}" data-key="${c.key}">${done?'✓ Agregado':'+ Agregar'}</button></div>
+        </div>`;
+      }).join('');
+      rl.querySelectorAll('.btn-ag:not(.dn)').forEach(b => b.addEventListener('click', () => { const cu = cursosData.find(x => x.key === b.dataset.key); if (cu && !cursosAgregados.some(a => a.key === cu.key)) addC(cu); }));
+    }
+
+    tb.addEventListener('input', () => { if (cursosData.length) render(tb.value); });
+
+    let pendingCurso = null;
+    const mRest = new bootstrap.Modal(document.getElementById('modalRestriccion'));
+    function addC(c) {
+      if (c.restType === 'co') {
+        pendingCurso = c;
+        const urlMap = { '1':'semestre/1', '2':'semestre/2', 'vj':'vacaciones_junio', 'vd':'vacaciones_diciembre' };
+        document.getElementById('modalRestBody').querySelector('a').href = 'https://usuarios.ingenieria.usac.edu.gt/horarios/' + (urlMap[ss.value] || 'semestre/2');
+        mRest.show();
+      } else {
+        doAdd(c);
+      }
+    }
+    document.getElementById('btnConfirmarRestriccion').addEventListener('click', () => { if (pendingCurso) { doAdd(pendingCurso); pendingCurso = null; } mRest.hide(); });
+    function doAdd(c) { cursosAgregados.push({ ...c }); save(); msg(`${c.codigo} ${c.nombre} agregado`); if (tb.value) render(tb.value); renderAll(); }
+    function remC(k) { cursosAgregados = cursosAgregados.filter(x => x.key !== k); save(); if (tb.value) render(tb.value); renderAll(); msg('Curso quitado'); }
+    function save() { localStorage.setItem(SK, JSON.stringify(cursosAgregados)); }
+    function load() { try { const d = localStorage.getItem(SK); if (d) cursosAgregados = JSON.parse(d); } catch(_) {} }
+
+    function minOff(h) {
+      if (!h) return null;
+      const [hh, mm] = h.split(':').map(Number);
+      if (isNaN(hh)) return null;
+      const t = hh + (mm||0)/60;
+      return (t < H0 || t > H1) ? null : t - H0;
+    }
+
+    function renderAll() {
+      const lst = cursosAgregados;
+      cc.textContent = lst.length;
+      if (!lst.length) { rm.textContent = 'No hay cursos agregados.'; cg.style.display = 'none'; es.style.display = 'block'; ce.textContent = 'Sin traslapes'; return; }
+      rm.innerHTML = lst.map(c => `<div class="ri"><div class="rii"><span class="ric">${c.codigo}</span> ${c.nombre}<div class="rid">Sec ${c.seccion} · ${c.inicio}-${c.fin} · ${c.dias.join(' ')}</div></div><button class="btn-rm" data-key="${c.key}">✕</button></div>`).join('');
+      rm.querySelectorAll('.btn-rm').forEach(b => b.addEventListener('click', () => showModal(b.dataset.key)));
+
+      es.style.display = 'none'; cg.style.display = 'grid';
+      lst.forEach((c, i) => { if (!c._cl) c._cl = CL[i % CL.length]; });
+
+      // Detectar conflictos (cursos mismo día con horarios que se traslapan)
+      conflictKeys = {};
+      for (let i = 0; i < lst.length; i++) {
+        for (let j = i+1; j < lst.length; j++) {
+          const a = lst[i], b = lst[j];
+          const cd = a.dias.filter(d => b.dias.includes(d));
+          if (!cd.length) continue;
+          const a0 = minOff(a.inicio), a1 = minOff(a.fin);
+          const b0 = minOff(b.inicio), b1 = minOff(b.fin);
+          if (a0 === null || a1 === null || b0 === null || b1 === null) continue;
+          if (a0 < b1 && a1 > b0) { conflictKeys[a.key] = true; conflictKeys[b.key] = true; }
+        }
+      }
+      ce.textContent = Object.keys(conflictKeys).length > 0 ? `⚠ ${Object.keys(conflictKeys).length} traslape(s)` : '✓ Sin traslapes';
+
+      const conflictPanel = document.getElementById('conflictPanel');
+      const conflictList = document.getElementById('conflictList');
+      const conflictos = Object.keys(conflictKeys);
+      if (conflictos.length > 0) {
+        conflictPanel.style.display = 'block';
+        conflictList.innerHTML = conflictos.map(k => {
+          const c = lst.find(x => x.key === k);
+          if (!c) return '';
+          return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 6px;background:var(--card);border-radius:4px;border:1px solid var(--border)">
+            <span style="flex:1"><strong>${c.codigo}</strong> ${c.nombre} · Sec ${c.seccion} · ${c.inicio}-${c.fin} · ${c.dias.join(' ')}</span>
+            <button class="btn-rm" data-key="${c.key}" style="flex-shrink:0">✕</button>
+          </div>`;
+        }).join('');
+        conflictList.querySelectorAll('.btn-rm').forEach(b => b.addEventListener('click', () => showModal(b.dataset.key)));
+      } else {
+        conflictPanel.style.display = 'none';
+      }
+
+      // ─── Grilla con CSS Grid ───
+      // Cada bloque = 30 minutos (30px), cada hora tiene 2 bloques
+      const pxBloque = 30;
+      const totalBloques = (H1 - H0) * 2; // 28 bloques de 30min
+
+      let html = '<div class="cal-h"></div>';
+      DL.slice(0, 6).forEach(d => html += `<div class="cal-h">${d}</div>`);
+
+      for (let b = 0; b < totalBloques; b++) {
+        const hora = H0 + Math.floor(b / 2);
+        const minuto = (b % 2) * 30;
+        const esHora = minuto === 0;
+        const clsTL = esHora ? 'cal-tl hour-mark' : 'cal-tl';
+        const label = esHora ? String(hora).padStart(2,'0') + ':00' : ':' + String(minuto).padStart(2,'0');
+        html += `<div class="${clsTL}" style="grid-row:${b+2}"><div class="tl-line"></div><span class="tl-label">${label}</span></div>`;
+        for (let d = 0; d < 6; d++) {
+          const bTop = b === 0 ? 'border-top:1px solid var(--border)' : 'border-top:1px solid var(--line)';
+          html += `<div style="grid-row:${b+2};grid-column:${d+2};border-right:1px solid var(--line);${bTop}"></div>`;
+        }
+      }
+      cg.innerHTML = html;
+
+      // ─── Overlay de eventos sobre cada columna ───
+      for (let d = 0; d < 6; d++) {
+        const dayEl = document.createElement('div');
+        dayEl.style.cssText = `grid-row:2/${totalBloques+2};grid-column:${d+2};position:relative;`;
+        lst.forEach(c => {
+          if (!c.dias.some(dia => DM[dia.toUpperCase()] === d)) return;
+          const m0 = minOff(c.inicio), m1 = minOff(c.fin);
+          if (m0 === null || m1 === null) return;
+          const top = m0 * pxBloque * 2; // 30min blocks of 30px each
+          const height = Math.max(16, (m1 - m0) * pxBloque * 2);
+          const cn = conflictKeys[c.key] ? ' cnf' : '';
+          const el = document.createElement('div');
+          el.className = `cal-ev ${c._cl}${cn}`;
+          el.style.cssText = `position:absolute;top:${top}px;left:2px;right:2px;height:${height}px;`;
+          if (height < 26) el.classList.add('ce-sm');
+          el.innerHTML = `<div class="ce-c">${c.codigo} <span class="ce-s">${c.seccion}</span> <span style="font-weight:400;opacity:0.7;font-size:0.6rem">${c.inicio}-${c.fin}</span></div>${height < 26 ? '' : `<div class="ce-n">${c.nombre}</div>`}`;
+          el.dataset.key = c.key;
+          el.addEventListener('click', () => showModal(c.key));
+          dayEl.appendChild(el);
+        });
+        if (dayEl.children.length) cg.appendChild(dayEl);
+      }
+    }
+
+    let qk = null;
+    const mq = new bootstrap.Modal(document.getElementById('modalQuitar'));
+    function showModal(k) { qk = k; const cu = cursosAgregados.find(x => x.key === k); if (!cu) return; document.getElementById('modalQuitarBody').innerHTML = `¿Quitar <strong>${cu.codigo} — ${cu.nombre}</strong> (sección ${cu.seccion}) del horario?`; mq.show(); }
+    document.getElementById('btnConfirmarQuitar').addEventListener('click', () => { if (qk) { remC(qk); qk = null; } mq.hide(); });
+
+    bl.addEventListener('click', () => { if (!cursosAgregados.length) return; if (confirm('¿Quitar todos los cursos?')) { cursosAgregados = []; save(); renderAll(); if (tb.value) render(tb.value); msg('Horario limpiado'); } });
+
+    bc.addEventListener('click', cargar);
+    load(); renderAll();
+    if (!cursosData.length) cargar();
+  </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planificador de Horarios - USAC</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="512x512" href="../docs/favicon.png">
   <link href="../styles/horarios.css" rel="stylesheet">
 </head>
 <body>
@@ -56,9 +57,14 @@
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:6px">
           <h3 style="margin:0">📅 Horario semanal</h3>
-          <div class="bar-conf" id="barConflictos">
-            <span class="bd"></span>
-            <span id="conflictCount">Sin traslapes</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div class="bar-conf" id="barConflictos">
+              <span class="bd"></span>
+              <span id="conflictCount">Sin traslapes</span>
+            </div>
+            <button class="btn-ag" id="btnCapturar" style="background:var(--blue)">📸 Descargar</button>
+            <button class="btn-ag" id="btnCopiar" style="background:var(--purple)">📋 Copiar</button>
+            <button class="btn-ag" id="btnZoom" style="background:var(--muted)">🔍 Zoom</button>
           </div>
         </div>
         <div id="conflictPanel" style="display:none;background:rgba(233,69,96,0.08);border:1px solid var(--red);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:0.78rem">
@@ -115,6 +121,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     const SK = 'cursoControlHorarios';
     const DL = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
@@ -240,7 +247,11 @@
       const lst = cursosAgregados;
       cc.textContent = lst.length;
       if (!lst.length) { rm.textContent = 'No hay cursos agregados.'; cg.style.display = 'none'; es.style.display = 'block'; ce.textContent = 'Sin traslapes'; return; }
-      rm.innerHTML = lst.map(c => `<div class="ri"><div class="rii"><span class="ric">${c.codigo}</span> ${c.nombre}<div class="rid">Sec ${c.seccion} · ${c.inicio}-${c.fin} · ${c.dias.join(' ')}</div></div><button class="btn-rm" data-key="${c.key}">✕</button></div>`).join('');
+       rm.innerHTML = lst.map(c => {
+         const tipo = c.starKey === 'bl' ? '<span class="tipo-dot" style="background:var(--star-lab)"></span> Lab' : 'Curso';
+         const prof = c.catedratico && c.catedratico !== 'SIN CATEDRATICO' ? c.catedratico : 'Por asignar';
+         return `<div class="ri"><div class="rii"><span class="ric">${c.codigo}</span> ${c.nombre}<div class="rid">${tipo} · Sec ${c.seccion} · ${c.inicio}-${c.fin}</div><div class="rid">👤 ${prof}</div></div><button class="btn-rm" data-key="${c.key}">✕</button></div>`;
+       }).join('');
       rm.querySelectorAll('.btn-rm').forEach(b => b.addEventListener('click', () => showModal(b.dataset.key)));
 
       es.style.display = 'none'; cg.style.display = 'grid';
@@ -316,7 +327,8 @@
           el.className = `cal-ev ${c._cl}${cn}`;
           el.style.cssText = `position:absolute;top:${top}px;left:2px;right:2px;height:${height}px;`;
           if (height < 26) el.classList.add('ce-sm');
-          el.innerHTML = `<div class="ce-c">${c.codigo} <span class="ce-s">${c.seccion}</span> <span style="font-weight:400;opacity:0.7;font-size:0.6rem">${c.inicio}-${c.fin}</span></div>${height < 26 ? '' : `<div class="ce-n">${c.nombre}</div>`}`;
+          const star = c.starKey === 'bl' ? `<span class="ce-star bl">★</span>` : '';
+          el.innerHTML = `<div class="ce-c">${c.codigo} <span class="ce-s">${c.seccion}</span> ${star}<span style="font-weight:400;opacity:0.7;font-size:0.6rem">${c.inicio}-${c.fin}</span></div>${height < 26 ? '' : `<div class="ce-n">${c.nombre}</div>`}`;
           el.dataset.key = c.key;
           el.addEventListener('click', () => showModal(c.key));
           dayEl.appendChild(el);
@@ -333,6 +345,57 @@
     bl.addEventListener('click', () => { if (!cursosAgregados.length) return; if (confirm('¿Quitar todos los cursos?')) { cursosAgregados = []; save(); renderAll(); if (tb.value) render(tb.value); msg('Horario limpiado'); } });
 
     bc.addEventListener('click', cargar);
+
+    function generarCanvas(cb) {
+      const scroll = document.getElementById('calScroll');
+      const grid = document.getElementById('calGrid');
+      if (!cursosAgregados.length) { msg('Agregá cursos antes de capturar', 1); return; }
+      if (typeof html2canvas !== 'function') { msg('Librería de captura no disponible', 1); return; }
+      msg('Generando imagen...');
+      const prevScrollMax = scroll.style.maxHeight, prevScrollOver = scroll.style.overflow, prevZoom = scroll.style.zoom;
+      const prevCardOver = scroll.parentElement.style.overflow;
+      scroll.style.maxHeight = 'none';
+      scroll.style.overflow = 'visible';
+      scroll.style.zoom = '1';
+      scroll.parentElement.style.overflow = 'visible';
+      html2canvas(scroll, { backgroundColor: getComputedStyle(document.body).backgroundColor, scale: 2.5, windowWidth: scroll.scrollWidth }).then(canvas => {
+        scroll.style.maxHeight = prevScrollMax;
+        scroll.style.overflow = prevScrollOver;
+        scroll.style.zoom = prevZoom;
+        scroll.parentElement.style.overflow = prevCardOver;
+        cb(canvas);
+      }).catch(() => {
+        scroll.style.maxHeight = prevScrollMax;
+        scroll.style.overflow = prevScrollOver;
+        scroll.style.zoom = prevZoom;
+        scroll.parentElement.style.overflow = prevCardOver;
+        msg('No se pudo generar la imagen', 1);
+      });
+    }
+    document.getElementById('btnCapturar').addEventListener('click', () => {
+      generarCanvas(canvas => {
+        const a = document.createElement('a');
+        a.download = 'mi-horario.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        msg('Captura descargada 📸');
+      });
+    });
+    document.getElementById('btnCopiar').addEventListener('click', () => {
+      generarCanvas(canvas => {
+        canvas.toBlob(blob => {
+          if (navigator.clipboard && window.ClipboardItem) {
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => msg('Imagen copiada al portapapeles 📋')).catch(() => msg('No se pudo copiar', 1));
+          } else { msg('Tu navegador no soporta copiar imagen', 1); }
+        });
+      });
+    });
+    let zoom = 1;
+    document.getElementById('btnZoom').addEventListener('click', () => {
+      zoom = zoom === 1 ? 1.3 : 1;
+      document.getElementById('calScroll').style.zoom = zoom;
+    });
+
     load(); renderAll();
     if (!cursosData.length) cargar();
   </script>

@@ -7,8 +7,8 @@ const OUT_DIR = path.join(__dirname, '..', 'data', 'horarios');
 const URLS = {
   'semestre_1': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/1',
   'semestre_2': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2',
-  'vacaciones_junio': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_junio',
-  'vacaciones_diciembre': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_diciembre',
+  'vacaciones_junio': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones/1',
+  'vacaciones_diciembre': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones/2',
 };
 
 const SM = { 'badge-blue': 'bl', 'badge-info': 'ci', 'badge-success': 'vd', 'badge-danger': 'rj' };

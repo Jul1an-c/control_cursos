@@ -21,6 +21,7 @@
   --star-td: #06b6d4;
   --star-dib: #10b981;
   --star-pra: #e94560;
+  --star-prac: #e94560;
 }
 [data-bs-theme="dark"] {
   --bg: #121212;
@@ -258,13 +259,15 @@ select.sel option { background: #1a1a32; color: #fff; }
 .sct.vs { opacity: 1; }
 
 /* ─── CALENDARIO ─── */
-.cal-scr {
-  overflow: auto;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card);
-  max-height: 500px;
-}
+    .cal-scr {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      max-height: 620px;
+      padding: 4px;
+    }
+    .cal-g { transition: transform 0.15s; }
 .cal-g {
   display: grid;
   grid-template-columns: 50px repeat(6, 1fr);
@@ -345,6 +348,18 @@ select.sel option { background: #1a1a32; color: #fff; }
 .cal-cl6 { background: #cffafe; color: #155e75; }
 .cal-cl7 { background: #ffedd5; color: #9a3412; }
 .cal-cl8 { background: #e0e7ff; color: #3730a3; }
+
+.ce-star { font-size: 0.65rem; margin-left: 2px; }
+.ce-star.bl { color: var(--star-lab) !important; }
+[data-bs-theme="dark"] .ce-star.bl { color: #93c5fd !important; }
+
+.tipo-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
 
 [data-bs-theme="dark"] .cal-cl1 { background: rgba(59,130,246,0.22); color: #93c5fd; }
 [data-bs-theme="dark"] .cal-cl2 { background: rgba(16,185,129,0.22); color: #6ee7b7; }

@@ -24,10 +24,9 @@
     abreviatura: 'Electrónica',
     universidad: 'USAC - CLAR 2025',
     areas: {
-      'Matemática':       { color: '#e8a838', label: 'Matemática' },
-      'Física':           { color: '#3b82f6', label: 'Física' },
-      'Especialización':  { color: '#10b981', label: 'Especialización' },
-      'General':          { color: '#f97316', label: 'General' }
+      'Potencia':           { color: '#e8a838', label: 'Potencia'},
+      'Electrotécnia':      { color: '#00b050', label: 'Electrotécnia'},
+      'General(Sistemas)':  { color: '#f97316', label: 'General(Color predominante)'}
     },
     cursos: [
       {

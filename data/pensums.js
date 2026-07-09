@@ -14,8 +14,8 @@
 
   Ejemplos:
     usac_electronica_clar2025.js   → USAC, Electrónica, plan CLAR 2025
-    usac_sistemas_clar2015.js       → USAC, Sistemas, pensum anterior a CLAR 2015
-    usac_agronomia_clar2025.js    → USAC, Agronomía, plan CLAR 2025
+    usac_sistemas_clar2015.js      → USAC, Sistemas, pensum anterior a CLAR 2015
+    usac_agronomia_clar2025.js     → USAC, Agronomía, plan CLAR 2025
 */
 
 const PENSUMS_META = [

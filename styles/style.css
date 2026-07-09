@@ -164,7 +164,7 @@ body {
   margin-left: auto;
 }
 
-/* ─── COURSE CARD ─── */
+/* ─── Card de Curso ─── */
 .curso-card {
   display: flex;
   align-items: stretch;
@@ -433,7 +433,6 @@ body {
 .legend-dot.area-general { background: var(--area-general); }
 
 /* ─── RESPONSIVE ─── */
-/* ─── EXPORT REMINDER ─── */
 .export-reminder {
   display: none;
   align-items: center;

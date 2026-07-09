@@ -1,6 +1,6 @@
 # Cómo agregar otro pensum USAC
 
-La app tiene el pensum de Ingeniería en Ciencias y Sistemas (CLAR 2025). Si querés agregar otra carrera USAC, otro año de Sistemas, o incluso otra universidad, seguí estos pasos.
+La app tiene el pensum de Ingeniería en Ciencias y Sistemas (CLAR 2025). Si querés agregar otra carrera de la USAC o el pensum de otro año de Sistemas, seguí estos pasos.
 
 ---
 
@@ -15,7 +15,7 @@ Para agregar una nueva, **creás un archivo nuevo** y lo registrás en `data/pen
 
 ## 1. Convención de nombres
 
-Usá el formato `{universidad}_{carrera}_{plan}` para evitar colisiones:
+Usá el formato `{universidad}_{carrera}_{plan}` para evitar colisiones (todas las carreras son de la USAC):
 
 ```
 Archivo:  usac_electronica_clar2025.js
@@ -23,26 +23,6 @@ ID:       usac_electronica_clar2025
 
 Archivo:  usac_sistemas_clar2015.js   (pensum anterior)
 ID:       usac_sistemas_clar2015
-
-Archivo:  usac_agronomia_2025.js
-ID:       usac_agronomia_2025
-```
-
-### ¿Misma carrera pero otro año?
-
-Si ya existe Sistemas CLAR 2025 y vos tenés el pensum de otro año:
-
-```
-usac_sistemas_clar2025.js   → el que ya existe
-usac_sistemas_2015.js       → versión 2015
-```
-
-### ¿De otra universidad?
-
-Si alguien de otra universidad quiere agregar su carrera, el formato sigue siendo el mismo:
-
-```
-{universidad}_{carrera}_{plan}.js     → Universidad, Carrara, Plan
 ```
 
 ## 2. Crear el archivo de tu carrera

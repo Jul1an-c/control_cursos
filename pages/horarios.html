@@ -118,9 +118,8 @@
   <script>
     const SK = 'cursoControlHorarios';
     const PROXIES = [
+      '/proxy?url=',
       'https://api.allorigins.win/raw?url=',
-      'https://api.allorigins.win/get?url=',
-      'https://api.codetabs.com/v1/proxy?quest=',
     ];
     let proxyIdx = 0;
     function proxyUrl(u) { return PROXIES[proxyIdx] + encodeURIComponent(u); }
@@ -210,9 +209,6 @@
         }
         if (!r || !r.ok) throw new Error('Todos los proxies fallaron. Probá más tarde.');
         let text = await r.text();
-        if (PROXIES[proxyIdx].includes('/get?')) {
-          try { text = JSON.parse(text).contents; } catch(_) {}
-        }
         cursosData = parse(text);
         if (!cursosData.length) throw new Error('No se encontraron cursos.');
         ld.style.display = 'none'; rl.style.display = 'block';

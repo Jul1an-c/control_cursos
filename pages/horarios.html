@@ -117,18 +117,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const SK = 'cursoControlHorarios';
-    const PROXIES = [
-      '/proxy?url=',
-      'https://api.allorigins.win/raw?url=',
-    ];
-    let proxyIdx = 0;
-    function proxyUrl(u) { return PROXIES[proxyIdx] + encodeURIComponent(u); }
     const DL = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
     const DA = ['LU','MA','MI','JU','VI','SA','DO'];
     const DM = { LU:0, MA:1, MI:2, JU:3, VI:4, SA:5, DO:6 };
     const H0 = 7, H1 = 21;
     const CL = ['cal-cl1','cal-cl2','cal-cl3','cal-cl4','cal-cl5','cal-cl6','cal-cl7','cal-cl8'];
-    const SM = { 'badge-blue':'bl','badge-info':'ci','badge-success':'vd','badge-danger':'rj' };
 
     let cursosData = [];
     let cursosAgregados = [];
@@ -158,39 +151,15 @@
       tt.classList.add('sh'); clearTimeout(ti); ti = setTimeout(() => tt.classList.remove('sh'), 2500);
     }
 
-    function parse(html) {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      const rows = doc.querySelectorAll('#tblHorarios tbody tr');
-      const out = [];
-      rows.forEach(tr => {
-        const td = tr.querySelectorAll('td');
-        if (td.length < 8) return;
-        const raw = td[0].textContent.trim();
-        const m = raw.match(/^(\d{4})\s+(.+)/);
-        if (!m) return;
-        const badge = td[0].querySelector('.badge');
-        let sk = null;
-        if (badge) for (const c of badge.classList) { if (SM[c]) { sk = SM[c]; break; } }
-        const sr = td[1].textContent.trim();
-        const md = td[2].textContent.trim();
-        const hi = td[3].textContent.trim();
-        const hf = td[4].textContent.trim();
-        const dr = td[5].textContent;
-        const ds = DL.filter((_, i) => new RegExp('\\b' + DA[i] + '\\b').test(dr));
-        const ca = td[6].textContent.trim();
-        const ax = td[7].textContent.trim();
-        const btn = td[8].querySelector('button');
-        const rt = btn && btn.textContent.trim().includes('Ver') ? 'co' : 'sn';
-        out.push({ codigo: m[1], nombre: m[2].trim(), seccion: sr, modalidad: md, inicio: hi, fin: hf, dias: ds, catedratico: ca, auxiliar: ax, restType: rt, starKey: sk, key: m[1] + '-' + sr });
-      });
-      return out;
+    function parse(json) {
+      return Array.isArray(json) ? json : [];
     }
 
     const URLS = {
-      '1': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/1',
-      '2': 'https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2',
-      'vj': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_junio',
-      'vd': 'https://usuarios.ingenieria.usac.edu.gt/horarios/vacaciones_diciembre',
+      '1': '/data/horarios/semestre_1.json',
+      '2': '/data/horarios/semestre_2.json',
+      'vj': '/data/horarios/vacaciones_junio.json',
+      'vd': '/data/horarios/vacaciones_diciembre.json',
     };
 
     async function cargar() {
@@ -199,18 +168,10 @@
       ld.style.display = 'block'; ld.innerHTML = '<div class="sp"></div><div style="margin-top:7px">Cargando horarios...</div>';
       er.style.display = 'none'; rl.style.display = 'none';
       try {
-        let r;
-        for (let i = proxyIdx; i < PROXIES.length; i++) {
-          proxyIdx = i;
-          try {
-            r = await fetch(proxyUrl(url), { signal: AbortSignal.timeout(15000) });
-            if (r.ok) break;
-          } catch (_) { continue; }
-        }
-        if (!r || !r.ok) throw new Error('Todos los proxies fallaron. Probá más tarde.');
-        let text = await r.text();
-        cursosData = parse(text);
-        if (!cursosData.length) throw new Error('No se encontraron cursos.');
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('No se pudo cargar el archivo de horarios.');
+        cursosData = parse(await r.json());
+        if (!cursosData.length) throw new Error('No se encontraron cursos para este período.');
         ld.style.display = 'none'; rl.style.display = 'block';
         render(tb.value); msg(`${cursosData.length} cursos cargados`);
       } catch (e) {

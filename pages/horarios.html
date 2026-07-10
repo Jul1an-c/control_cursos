@@ -110,7 +110,11 @@
         <div class="modal-header"><h5 class="modal-title">⚠ Este curso tiene restricciones</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body" id="modalRestBody">
           <p style="font-size:0.88rem">Este curso puede tener requisitos especiales (carné terminado en ciertos dígitos, plan específico, etc.).</p>
-          <p style="font-size:0.85rem;color:var(--muted)">Verificá en el <a href="https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2" target="_blank" rel="noopener">sitio oficial de horarios USAC</a> para asegurarte de que podés asignarte.</p>
+          <div id="restCursoInfo" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <div style="font-size:0.9rem"><strong>Curso:</strong> <span id="restCodigo" style="font-weight:700">—</span></div>
+            <button class="btn-ag" id="btnCopiarCodigo" style="background:var(--purple)">📋 Copiar</button>
+          </div>
+          <p style="font-size:0.85rem;color:var(--muted)">Copiá el código, verificalo en el <a href="https://usuarios.ingenieria.usac.edu.gt/horarios/semestre/2" target="_blank" rel="noopener">sitio oficial de horarios USAC</a> y asegurate de que podés asignarte.</p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
@@ -133,6 +137,7 @@
     let cursosData = [];
     let cursosAgregados = [];
     let conflictKeys = {};
+    let codigosConLab = new Set();
 
     const $ = s => document.querySelector(s);
     const ss = $('#selSemestre'), bc = $('#btnCargar'), bl = $('#btnLimpiar');
@@ -179,6 +184,7 @@
         if (!r.ok) throw new Error('No se pudo cargar el archivo de horarios.');
         cursosData = parse(await r.json());
         if (!cursosData.length) throw new Error('No se encontraron cursos para este período.');
+        codigosConLab = new Set(cursosData.filter(c => c.starKey === 'bl').map(c => c.codigo));
         ld.style.display = 'none'; rl.style.display = 'block';
         render(tb.value); msg(`${cursosData.length} cursos cargados`);
       } catch (e) {
@@ -190,7 +196,14 @@
 
     function render(f) {
       const q = f.toLowerCase().trim();
-      let items = q ? cursosData.filter(c => c.codigo.includes(q) || c.nombre.toLowerCase().includes(q) || c.catedratico.toLowerCase().includes(q)) : [...cursosData];
+      const combo = q.match(/^(\d{3,4})\s+(.+)$/);
+      let items;
+      if (combo) {
+        const [, cod, sec] = combo;
+        items = cursosData.filter(c => c.codigo.includes(cod) && c.seccion.toLowerCase() === sec.trim());
+      } else {
+        items = q ? cursosData.filter(c => c.codigo.includes(q) || c.nombre.toLowerCase().includes(q) || c.catedratico.toLowerCase().includes(q)) : [...cursosData];
+      }
       const ord = { null: 0, bl: 1, ci: 2, vd: 3, rj: 4 };
       items.sort((a, b) => (ord[a.starKey] ?? 0) - (ord[b.starKey] ?? 0) || a.codigo.localeCompare(b.codigo));
       if (!items.length) { rl.innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.85rem">Sin resultados</div>'; return; }
@@ -205,8 +218,12 @@
         const restHtml = c.restType === 'co'
           ? '<span class="rb co" title="Verificá en el sitio oficial de USAC">⚠ Restricciones</span>'
           : '<span class="rb sn">✓ Sin restricciones</span>';
+        const labHtml = (c.starKey !== 'bl' && codigosConLab.has(c.codigo))
+          ? '<span class="rb lab" title="Este curso tiene laboratorio. Recordá agregar también la sección de laboratorio.">🧪 Tiene laboratorio</span>'
+          : '';
         return `<div class="cc${done?' done':''}">
           <div class="cc-h"><div><span class="cc-c">${c.codigo}</span> <span class="cc-n">${c.nombre}</span>${star}</div><span class="cc-sec">${c.seccion}</span></div>
+          ${labHtml ? `<div style="margin:4px 0">${labHtml}</div>` : ''}
           <div class="cc-i"><div><div class="il">Modalidad</div><div class="iv">${c.modalidad}</div></div><div><div class="il">Horario</div><div class="iv">${c.inicio} — ${c.fin}</div></div><div><div class="il">Catedrático</div><div class="iv">${c.catedratico||'—'}</div></div><div><div class="il">Auxiliar</div><div class="iv">${c.auxiliar||'—'}</div></div></div>
           <div class="cc-d">${dg}</div>
           <div class="cc-f">${restHtml}<button class="btn-ag${done?' dn':''}" data-key="${c.key}">${done?'✓ Agregado':'+ Agregar'}</button></div>
@@ -222,16 +239,22 @@
     function addC(c) {
       if (c.restType === 'co') {
         pendingCurso = c;
-        const urlMap = { '1':'semestre/1', '2':'semestre/2', 'vj':'vacaciones_junio', 'vd':'vacaciones_diciembre' };
+        const urlMap = { '1':'semestre/1', '2':'semestre/2', 'vj':'vacaciones/1', 'vd':'vacaciones/2' };
         document.getElementById('modalRestBody').querySelector('a').href = 'https://usuarios.ingenieria.usac.edu.gt/horarios/' + (urlMap[ss.value] || 'semestre/2');
+        document.getElementById('restCodigo').textContent = `${c.codigo} ${c.seccion}`;
         mRest.show();
       } else {
         doAdd(c);
       }
     }
     document.getElementById('btnConfirmarRestriccion').addEventListener('click', () => { if (pendingCurso) { doAdd(pendingCurso); pendingCurso = null; } mRest.hide(); });
-    function doAdd(c) { cursosAgregados.push({ ...c }); save(); msg(`${c.codigo} ${c.nombre} agregado`); if (tb.value) render(tb.value); renderAll(); }
-    function remC(k) { cursosAgregados = cursosAgregados.filter(x => x.key !== k); save(); if (tb.value) render(tb.value); renderAll(); msg('Curso quitado'); }
+    document.getElementById('btnCopiarCodigo').addEventListener('click', () => {
+      if (!pendingCurso) return;
+      const txt = `${pendingCurso.codigo} ${pendingCurso.seccion}`;
+      navigator.clipboard.writeText(txt).then(() => msg(`"${txt}" copiado 📋`)).catch(() => msg('No se pudo copiar', 1));
+    });
+    function doAdd(c) { cursosAgregados.push({ ...c }); save(); msg(`${c.codigo} ${c.nombre} agregado`); if (cursosData.length) render(tb.value); renderAll(); }
+    function remC(k) { cursosAgregados = cursosAgregados.filter(x => x.key !== k); save(); if (cursosData.length) render(tb.value); renderAll(); msg('Curso quitado'); }
     function save() { localStorage.setItem(SK, JSON.stringify(cursosAgregados)); }
     function load() { try { const d = localStorage.getItem(SK); if (d) cursosAgregados = JSON.parse(d); } catch(_) {} }
 
@@ -246,7 +269,7 @@
     function renderAll() {
       const lst = cursosAgregados;
       cc.textContent = lst.length;
-      if (!lst.length) { rm.textContent = 'No hay cursos agregados.'; cg.style.display = 'none'; es.style.display = 'block'; ce.textContent = 'Sin traslapes'; return; }
+      if (!lst.length) { rm.textContent = 'No hay cursos agregados.'; cg.style.display = 'none'; es.style.display = 'block'; ce.textContent = 'Sin traslapes'; conflictKeys = {}; document.getElementById('conflictPanel').style.display = 'none'; return; }
        rm.innerHTML = lst.map(c => {
          const tipo = c.starKey === 'bl' ? '<span class="tipo-dot" style="background:var(--star-lab)"></span> Lab' : 'Curso';
          const prof = c.catedratico && c.catedratico !== 'SIN CATEDRATICO' ? c.catedratico : 'Por asignar';
@@ -342,7 +365,7 @@
     function showModal(k) { qk = k; const cu = cursosAgregados.find(x => x.key === k); if (!cu) return; document.getElementById('modalQuitarBody').innerHTML = `¿Quitar <strong>${cu.codigo} — ${cu.nombre}</strong> (sección ${cu.seccion}) del horario?`; mq.show(); }
     document.getElementById('btnConfirmarQuitar').addEventListener('click', () => { if (qk) { remC(qk); qk = null; } mq.hide(); });
 
-    bl.addEventListener('click', () => { if (!cursosAgregados.length) return; if (confirm('¿Quitar todos los cursos?')) { cursosAgregados = []; save(); renderAll(); if (tb.value) render(tb.value); msg('Horario limpiado'); } });
+    bl.addEventListener('click', () => { if (!cursosAgregados.length) return; if (confirm('¿Quitar todos los cursos?')) { cursosAgregados = []; conflictKeys = {}; save(); renderAll(); if (cursosData.length) render(tb.value); msg('Horario limpiado'); } });
 
     bc.addEventListener('click', cargar);
 

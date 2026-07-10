@@ -75,7 +75,7 @@ function parse(html) {
       auxiliar,
       restType,
       starKey,
-      key: m[1] + '-' + seccion,
+      key: [m[1], seccion, starKey || 'c', inicio, dias.join('')].join('-'),
     });
   }
   return out;

@@ -191,6 +191,11 @@ select.sel option { background: #1a1a32; color: #fff; }
   background: rgba(245,158,11,0.1); color: #d97706;
   border: 1px solid rgba(245,158,11,0.25);
 }
+.rb.lab {
+  background: rgba(139,92,246,0.1); color: #7c3aed;
+  border: 1px solid rgba(139,92,246,0.25);
+}
+[data-bs-theme="dark"] .rb.lab { color: #c4b5fd; }
 
 .btn-ag {
   background: var(--green); color: #fff; border: none;
